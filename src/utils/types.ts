@@ -3,5 +3,5 @@ export type MaybePromise<T> = T | Promise<T>
 export type MarkPartial<T, K extends keyof T> = Omit<Required<T>, K> &
   Partial<Pick<T, K>>
 
-export type WatchCallback = (first?: boolean) => Promise<void>
-export type CleanupCallback = () => Promise<void>
+export type WatchCallback = (first?: boolean) => void | Promise<void>
+export type CleanupCallback = () => void | Promise<void>

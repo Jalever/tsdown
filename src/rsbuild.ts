@@ -1,13 +1,14 @@
 import path from 'node:path'
 import {
   createRsbuild,
+  type EnvironmentConfig,
   type RsbuildConfig,
   type RsbuildEntry,
   type Rspack,
 } from '@rsbuild/core'
 import { getProductionDeps } from './features/external'
 import { toArray } from './utils/general'
-import type { ResolvedOptions } from './options'
+import type { Format, ResolvedOptions } from './options'
 import type { CleanupCallback, WatchCallback } from './utils/types'
 import type { PackageJson } from 'pkg-types'
 
@@ -18,14 +19,14 @@ export async function rsbuildEngine(
   const {
     entry,
     external,
-    plugins,
+    // plugins,
     outDir,
     format,
     platform,
     alias,
-    treeshake,
+    // treeshake,
     sourcemap,
-    dts,
+    // dts,
     minify = false,
     watch,
   } = resolved
@@ -45,6 +46,28 @@ export async function rsbuildEngine(
     },
     mode: watch ? 'development' : 'production',
 
+    environments: Object.fromEntries(
+      format.map((format): [string, EnvironmentConfig] => {
+        format = normalizeFormat(format)
+        return [
+          format,
+          {
+            tools: {
+              rspack: {
+                output: {
+                  module: format === 'module',
+                  chunkFormat: format,
+                  library: {
+                    type: format === 'module' ? 'modern-module' : format,
+                  },
+                },
+              },
+            },
+          },
+        ]
+      }),
+    ),
+
     // input: entry,
     // external,
     // resolve: { alias },
@@ -61,6 +84,8 @@ export async function rsbuildEngine(
     rsbuildConfig,
   })
   await rsbuild.build()
+
+  return () => {}
 
   // instance.build()
   // await writeBundle()
@@ -100,6 +125,19 @@ export async function rsbuildEngine(
   //   )
   // }
 }
+
+function normalizeFormat(format: Format): 'module' | 'commonjs' {
+  switch (format) {
+    case 'cjs':
+    case 'commonjs':
+      return 'commonjs'
+    case 'esm':
+    case 'es':
+    case 'module':
+      return 'module'
+  }
+}
+
 function normalizeEntry(
   entry: string | string[] | Record<string, string>,
 ): RsbuildEntry {
