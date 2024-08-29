@@ -1,14 +1,11 @@
 import path from 'node:path'
-import process from 'node:process'
 import {
   createRsbuild,
-  rspack,
   type RsbuildConfig,
   type RsbuildEntry,
+  type Rspack,
 } from '@rsbuild/core'
-import { IsolatedDecl } from 'unplugin-isolated-decl'
-import { ExternalPlugin, getProductionDeps } from './features/external'
-import { resolveOutputExtension } from './features/output'
+import { getProductionDeps } from './features/external'
 import { toArray } from './utils/general'
 import type { ResolvedOptions } from './options'
 import type { CleanupCallback, WatchCallback } from './utils/types'
@@ -44,7 +41,7 @@ export async function rsbuildEngine(
       externals: [...deps, ...((external || []) as any)],
       minify,
       distPath: { root: path.resolve(outDir) },
-      sourceMap: { js: sourcemap ? 'source-map' : false },
+      sourceMap: { js: resolveSourceMap(sourcemap) },
     },
     mode: watch ? 'development' : 'production',
 
@@ -117,4 +114,19 @@ function normalizeEntry(
       toArray(value).map((file) => path.resolve(file)),
     ]),
   )
+}
+
+function resolveSourceMap(
+  sourceMap: ResolvedOptions['sourcemap'],
+): Rspack.Configuration['devtool'] {
+  // if (!sourceMap) return false
+  // if (sourceMap === true) return 'source-map'
+  switch (sourceMap) {
+    case true:
+      return 'source-map'
+    case 'inline':
+      return 'inline-source-map'
+    case 'hidden':
+      return 'hidden-source-map'
+  }
 }
