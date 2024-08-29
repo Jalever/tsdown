@@ -47,6 +47,7 @@ export interface Options {
         options: OutputOptions,
         format: Format,
       ) => MaybePromise<OutputOptions | void | null>)
+  engine?: 'rolldown' | 'rsbuild'
 }
 
 /**
@@ -90,6 +91,7 @@ export async function normalizeOptions(
     watch = false,
     inputOptions,
     outputOptions,
+    engine = 'rolldown',
   } = options
 
   entry = await resolveEntry(entry)
@@ -113,6 +115,7 @@ export async function normalizeOptions(
     watch,
     inputOptions,
     outputOptions,
+    engine,
   }
 }
 

@@ -1,4 +1,5 @@
 import process from 'node:process'
+import { version as rsbuildVersion } from '@rsbuild/core/package.json'
 import { cac } from 'cac'
 import pc from 'picocolors'
 import { version as rolldownVersion } from '../node_modules/rolldown/package.json'
@@ -28,13 +29,22 @@ export async function runCLI(): Promise<void> {
       default: 'node',
     })
     .option('--watch', 'Watch mode')
+    .option('--engine <engine>', 'Bundler engine: rolldown, rslib', {
+      default: 'rolldown',
+    })
     .action(async (input: string[], flags: Options) => {
       logger.level = flags.silent
         ? 0 // Fatal and Error
         : 3 // Informational logs, success, fail, ready, start, ...
-      logger.info(
-        `tsdown ${pc.dim(`v${version}`)} powered by rolldown ${pc.dim(`v${rolldownVersion}`)}`,
-      )
+
+      let engineText: string = ''
+      if (flags.engine === 'rsbuild') {
+        engineText = `@rsbuild/core ${pc.dim(`v${rsbuildVersion}`)}`
+      } else {
+        engineText = `rolldown ${pc.dim(`v${rolldownVersion}`)}`
+      }
+      logger.info(`tsdown ${pc.dim(`v${version}`)} powered by ${engineText}`)
+
       const { build } = await import('./index')
       if (input.length > 0) flags.entry = input
       await build(flags)

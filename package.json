@@ -51,6 +51,7 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
+    "@rsbuild/core": "1.0.1-rc.0",
     "cac": "^6.7.14",
     "chokidar": "^3.6.0",
     "consola": "^3.2.3",
