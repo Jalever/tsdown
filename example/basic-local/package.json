@@ -1,0 +1,14 @@
+{
+    "name": "tsdown-basic-local-example",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "node ../../bin/tsdown.js",
+        "dev": "node ../../bin/tsdown.js --watch",
+        "start": "node dist/index.js"
+    },
+    "devDependencies": {
+        "typescript": "^5.2.2"
+    }
+}

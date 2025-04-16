@@ -1,0 +1,24 @@
+{
+    "name": "tsdown-multi-format-example",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsdown",
+        "dev": "tsdown --watch"
+    },
+    "devDependencies": {
+        "tsdown": "^0.8.0-beta.4",
+        "typescript": "^5.2.2"
+    }
+}
